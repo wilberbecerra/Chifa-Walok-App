@@ -58,8 +58,8 @@ Puede inspeccionarse desde **App Inspection → Database Inspector** en Android 
 Requisitos: Android Studio, un JDK compatible con Android Gradle Plugin 8.10.0, Android SDK 35 y un emulador o dispositivo con Android 7.0 o posterior.
 
 ```powershell
-git clone https://github.com/wilberbecerra/Chifa-Walok.git
-cd Chifa-Walok
+git clone https://github.com/wilberbecerra/Chifa-Walok-App.git
+cd Chifa-Walok-App
 .\gradlew.bat assembleDebug
 ```
 
