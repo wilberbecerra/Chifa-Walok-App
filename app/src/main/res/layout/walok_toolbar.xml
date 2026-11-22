@@ -1,0 +1,9 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="76dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="16dp" android:paddingEnd="16dp">
+        <ImageView android:id="@+id/toolbarLogo" android:layout_width="64dp" android:layout_height="64dp" android:src="@drawable/logo" android:scaleType="fitCenter" android:contentDescription="@string/logo_description" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/brand_name" android:textColor="@color/walok_primary" android:textSize="25sp" android:fontFamily="sans-serif-bold" android:layout_marginEnd="14dp" />
+        <View android:layout_width="1dp" android:layout_height="20dp" android:background="@color/walok_line" />
+        <TextView style="@style/Walok.Muted" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="14dp" android:text="@string/brand_context" android:textSize="13sp" />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/walok_line" />
+</LinearLayout>

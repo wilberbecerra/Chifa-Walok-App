@@ -1,0 +1,10 @@
+<resources>
+    <dimen name="walok_screen_padding">24dp</dimen>
+    <dimen name="walok_control_height">56dp</dimen>
+    <dimen name="walok_hit_target">48dp</dimen>
+    <dimen name="walok_radius">8dp</dimen>
+    <dimen name="walok_font_body">16sp</dimen>
+    <dimen name="walok_font_label">14sp</dimen>
+    <dimen name="walok_font_title">29sp</dimen>
+    <dimen name="walok_font_total">28sp</dimen>
+</resources>

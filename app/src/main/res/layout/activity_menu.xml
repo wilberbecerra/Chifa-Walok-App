@@ -1,95 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/menu"
-    tools:context=".Menu">
-
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="265dp"
-        android:layout_height="237dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.575"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.015"
-        app:srcCompat="@drawable/logo" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingVertical="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintVertical_bias="0.0">
-
-        <Button
-            android:id="@+id/btnPedido"
-            android:layout_width="238dp"
-            android:layout_height="41dp"
-            android:backgroundTint="#FF0000"
-            android:text="Pedido"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.689" />
-
-        <Button
-            android:id="@+id/btnCaja"
-            android:layout_width="238dp"
-            android:layout_height="41dp"
-            android:backgroundTint="#FF0000"
-            android:text="Caja"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.689" />
-
-        <Button
-            android:id="@+id/btnCierreCaja"
-            android:layout_width="238dp"
-            android:layout_height="41dp"
-            android:backgroundTint="#FF0000"
-            android:text="Cierre de caja"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
-            app:layout_constraintVertical_bias="0.689" />
-
-        <Button
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="238dp"
-            android:layout_height="41dp"
-            android:backgroundTint="#D70000"
-            android:text="Cerrar sesión"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF" />
-
-    </LinearLayout>
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/screenRoot" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@color/walok_background">
+    <include layout="@layout/walok_toolbar" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="24dp" android:paddingBottom="32dp" android:layout_marginStart="@dimen/walok_screen_padding" android:layout_marginEnd="@dimen/walok_screen_padding" app:layout_constraintWidth_max="480dp" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <TextView style="@style/Walok.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/service_title" />
+                <TextView style="@style/Walok.Description" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/service_description" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnPedido" style="@style/Walok.PrimaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:text="@string/new_order" app:icon="@drawable/walok_ic_order" />
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="30dp" android:background="@color/walok_line" />
+                <LinearLayout android:id="@+id/btnCaja" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="96dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="18dp" android:paddingBottom="18dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:importantForAccessibility="yes" android:contentDescription="@string/cash_route">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/walok_ic_cash" android:importantForAccessibility="no" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp" android:layout_marginEnd="16dp">
+                        <TextView style="@style/Walok.Label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/cash_route" android:textSize="17sp" />
+                        <TextView style="@style/Walok.Muted" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/cash_route_description" />
+                    </LinearLayout>
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/walok_ic_chevron" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                <LinearLayout android:id="@+id/btnCierreCaja" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="96dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="18dp" android:paddingBottom="18dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" android:importantForAccessibility="yes" android:contentDescription="@string/close_title">
+                    <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/walok_ic_close" android:importantForAccessibility="no" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:layout_marginStart="16dp" android:layout_marginEnd="16dp">
+                        <TextView style="@style/Walok.Label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/close_title" android:textSize="17sp" />
+                        <TextView style="@style/Walok.Muted" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/close_route_description" />
+                    </LinearLayout>
+                    <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/walok_ic_chevron" android:importantForAccessibility="no" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                <TextView android:id="@+id/tvUsuario" style="@style/Walok.Muted" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="32dp" android:text="@string/empty_value" android:textSize="13sp" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnCerrarSesion" style="@style/Walok.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/logout" android:gravity="start|center_vertical" app:icon="@drawable/walok_ic_logout" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

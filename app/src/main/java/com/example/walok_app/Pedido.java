@@ -1,104 +1,99 @@
 package com.example.walok_app;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pedido extends AppCompatActivity {
+public class Pedido extends WalokActivity {
+    private Spinner mesa, plato;
+    private EditText cantidad;
+    private TextView precio, total;
+    private UserDatabaseHelper helper;
+    private final List<Plato> platos = new ArrayList<>();
 
-    Spinner spMesa, spPlato;
-    EditText etCantidad;
-    Button btnGenerar;
-    TextView btnCerrar;
-    UserDatabaseHelper dbHelper;
-
-    List<Plato> listaPlatos;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        deleteDatabase("WaLokUsers.db");
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pedido);
-
-        spMesa = findViewById(R.id.spMesa);
-        spPlato = findViewById(R.id.spPlato);
-        etCantidad = findViewById(R.id.etCantidad);
-        btnGenerar = findViewById(R.id.btnGenerar);
-        btnCerrar = findViewById(R.id.btnCerrar);
-
-        dbHelper = new UserDatabaseHelper(this);
-
-        // Combo de mesas
-        String[] mesas = {"Seleccionar", "1", "2", "3", "4", "5"};
-        ArrayAdapter<String> mesaAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, mesas);
-        mesaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spMesa.setAdapter(mesaAdapter);
-
-        // Lista de platos con precios
-        listaPlatos = new ArrayList<>();
-        listaPlatos.add(new Plato("Seleccionar", 0));
-        listaPlatos.add(new Plato("Arroz Chaufa", 18.0));
-        listaPlatos.add(new Plato("Pollo con Verduras", 20.0));
-        listaPlatos.add(new Plato("Tallarín Saltado", 16.0));
-        listaPlatos.add(new Plato("Kam Lu Wantán", 22.0));
-
-        ArrayAdapter<Plato> platoAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, listaPlatos);
-        platoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spPlato.setAdapter(platoAdapter);
-
-        btnCerrar.setOnClickListener(v -> finish());
-
-        btnGenerar.setOnClickListener(v -> {
-            String mesa = spMesa.getSelectedItem().toString();
-            Plato platoSeleccionado = (Plato) spPlato.getSelectedItem();
-            String cantidadStr = etCantidad.getText().toString().trim();
-
-            if (mesa.equals("Seleccionar") || platoSeleccionado.nombre.equals("Seleccionar") || cantidadStr.isEmpty()) {
-                mostrarAlerta("Datos incompletos", "Todos los campos son obligatorios.");
-                return;
-            }
-
-            int cantidad = Integer.parseInt(cantidadStr);
-            double precio = platoSeleccionado.precio;
-            double total = precio * cantidad;
-            String plato = platoSeleccionado.nombre;
-
-            try {
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                db.execSQL("INSERT INTO pedidos (mesa, plato, cantidad, precio, total) VALUES (?, ?, ?, ?, ?)",
-                        new Object[]{mesa, plato, cantidad, precio, total});
-                db.close();
-
-                mostrarAlerta("Éxito", "Pedido registrado correctamente.\nTotal: S/ " + total);
-                limpiarFormulario();
-
-            } catch (Exception e) {
-                mostrarAlerta("Error", "No se pudo registrar el pedido.");
-            }
+    @Override protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        if (!showScreen(R.layout.activity_pedido, true)) return;
+        helper = new UserDatabaseHelper(this);
+        mesa = findViewById(R.id.spMesa);
+        plato = findViewById(R.id.spPlato);
+        cantidad = findViewById(R.id.etCantidad);
+        precio = findViewById(R.id.tvPrecio);
+        total = findViewById(R.id.tvTotalPedido);
+        List<String> mesas = new ArrayList<>();
+        mesas.add(getString(R.string.select_table));
+        for (int n = 1; n <= 5; n++) mesas.add(getString(R.string.table_number, n));
+        ArrayAdapter<String> tableAdapter = new ArrayAdapter<>(this, R.layout.walok_spinner_item, mesas);
+        tableAdapter.setDropDownViewResource(R.layout.walok_spinner_item);
+        mesa.setAdapter(tableAdapter);
+        String[] names = getResources().getStringArray(R.array.platos_array);
+        String[] prices = getResources().getStringArray(R.array.precios_array);
+        for (int i = 0; i < names.length; i++) platos.add(new Plato(names[i], Double.parseDouble(prices[i])));
+        ArrayAdapter<Plato> dishAdapter = new ArrayAdapter<>(this, R.layout.walok_spinner_item, platos);
+        dishAdapter.setDropDownViewResource(R.layout.walok_spinner_item);
+        plato.setAdapter(dishAdapter);
+        plato.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position, long id) { updateAmount(); }
+            @Override public void onNothingSelected(AdapterView<?> parent) { updateAmount(); }
         });
+        watch(cantidad, this::updateAmount);
+        findViewById(R.id.btnGenerar).setOnClickListener(v -> registerOrder());
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        new AlertDialog.Builder(this)
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setPositiveButton("OK", null)
-                .show();
+    private int quantity() {
+        try { return Integer.parseInt(cantidad.getText().toString().trim()); }
+        catch (NumberFormatException error) { return 0; }
     }
 
-    private void limpiarFormulario() {
-        spMesa.setSelection(0);
-        spPlato.setSelection(0);
-        etCantidad.setText("");
+    private void updateAmount() {
+        Plato selected = (Plato) plato.getSelectedItem();
+        double unit = selected == null ? 0 : selected.precio;
+        int count = quantity();
+        precio.setText(money(unit));
+        total.setText(money(count > 0 && count <= 999 ? unit * count : 0));
+    }
+
+    private void registerOrder() {
+        if (mesa.getSelectedItemPosition() == 0 || plato.getSelectedItemPosition() == 0
+                || cantidad.getText().toString().trim().isEmpty()) {
+            feedback(getString(R.string.order_missing), false);
+            return;
+        }
+        int count = quantity();
+        if (count < 1 || count > 999) {
+            feedback(getString(R.string.quantity_invalid), false);
+            return;
+        }
+        Plato selected = (Plato) plato.getSelectedItem();
+        double amount = selected.precio * count;
+        ContentValues values = new ContentValues();
+        values.put("mesa", String.valueOf(mesa.getSelectedItemPosition()));
+        values.put("plato", selected.nombre);
+        values.put("cantidad", count);
+        values.put("precio", selected.precio);
+        values.put("total", amount);
+        try {
+            SQLiteDatabase db = helper.getWritableDatabase();
+            long id = db.insertOrThrow("pedidos", null, values);
+            mesa.setSelection(0);
+            plato.setSelection(0);
+            cantidad.setText("");
+            feedback(getString(R.string.order_success, id, money(amount)), true);
+        } catch (Exception error) {
+            feedback(getString(R.string.order_error), false);
+        }
+    }
+
+    @Override protected void onDestroy() {
+        if (helper != null) helper.close();
+        super.onDestroy();
     }
 }

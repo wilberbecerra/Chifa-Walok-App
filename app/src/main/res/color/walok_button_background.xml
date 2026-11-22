@@ -1,0 +1,5 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false" android:color="@color/walok_disabled" />
+    <item android:state_pressed="true" android:color="@color/walok_primary_pressed" />
+    <item android:color="@color/walok_primary" />
+</selector>

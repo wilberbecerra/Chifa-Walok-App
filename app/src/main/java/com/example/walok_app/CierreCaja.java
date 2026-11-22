@@ -1,120 +1,88 @@
 package com.example.walok_app;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.*;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class CierreCaja extends AppCompatActivity {
+public class CierreCaja extends WalokActivity {
+    private UserDatabaseHelper helper;
+    private String fecha;
+    private int pedidos;
+    private double importe;
+    private boolean saving;
+    private Button save;
 
-    EditText etResponsable, etFecha, etBoletas, etVentas;
-    Button btnCerrarCaja;
-    TextView btnCerrar;
-    UserDatabaseHelper dbHelper;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cierre_caja);
-
-        etResponsable = findViewById(R.id.etResponsable);
-        etFecha = findViewById(R.id.etFecha);
-        etBoletas = findViewById(R.id.etBoletas);
-        etVentas = findViewById(R.id.etVentas);
-        btnCerrarCaja = findViewById(R.id.btnCerrarCaja);
-        btnCerrar = findViewById(R.id.btnCerrar);
-
-        dbHelper = new UserDatabaseHelper(this);
-
-        btnCerrar.setOnClickListener(v -> finish());
-
-        cargarDatosAutomaticos();
-
-        btnCerrarCaja.setOnClickListener(v -> {
-            String responsable = etResponsable.getText().toString().trim();
-            String fecha = etFecha.getText().toString().trim();
-            String boletas = etBoletas.getText().toString().trim();
-            String ventas = etVentas.getText().toString().trim();
-
-            if (responsable.isEmpty() || fecha.isEmpty() || boletas.isEmpty() || ventas.isEmpty()) {
-                mostrarAlerta("Faltan datos", "Todos los campos son obligatorios.");
-                return;
-            }
-
-            try {
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                db.execSQL("INSERT INTO cierres (responsable, fecha, boletas, ventas) VALUES (?, ?, ?, ?)",
-                        new Object[]{responsable, fecha, Integer.parseInt(boletas), Double.parseDouble(ventas)});
-                db.close();
-            } catch (Exception e) {
-                mostrarAlerta("Error", "No se pudo guardar el cierre.");
-                return;
-            }
-
-            // Confirmación final
-            new AlertDialog.Builder(CierreCaja.this)
-                    .setTitle("¿Confirmar cierre de caja?")
-                    .setMessage("¿Estás seguro de cerrar la caja? Y volver al login.")
-                    .setPositiveButton("Sí, cerrar", (dialog, which) -> {
-                        // Borrar sesión
-                        SharedPreferences prefs = getSharedPreferences("walok_prefs", MODE_PRIVATE);
-                        prefs.edit().remove("usuario").apply();
-
-                        // Borrar base de datos
-                        deleteDatabase("walok.db");
-
-                        // Mensaje final
-                        Toast.makeText(CierreCaja.this, "Caja cerrada correctamente", Toast.LENGTH_SHORT).show();
-
-                        // Volver al login
-                        Intent intent = new Intent(CierreCaja.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                    })
-                    .setNegativeButton("Cancelar", null)
-                    .show();
-        });
+    @Override protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        if (!showScreen(R.layout.activity_cierre_caja, true)) return;
+        helper = new UserDatabaseHelper(this);
+        save = findViewById(R.id.btnCerrarCaja);
+        save.setOnClickListener(v -> new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.confirm_close_title)
+                .setMessage(R.string.confirm_close_description)
+                .setNegativeButton(R.string.cancel_close, null)
+                .setPositiveButton(R.string.confirm_close, (dialog, which) -> saveClose())
+                .show());
     }
 
-    private void cargarDatosAutomaticos() {
-        // Fecha actual
-        String fechaHoy = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        etFecha.setText(fechaHoy);
+    @Override protected void onResume() {
+        super.onResume();
+        if (helper != null) loadSummary();
+    }
 
-        // Usuario logueado
-        SharedPreferences prefs = getSharedPreferences("walok_prefs", MODE_PRIVATE);
-        String usuario = prefs.getString("usuario", "");
-        etResponsable.setText(usuario);
-
-        // Consultar total de pedidos y suma de totales
+    private void loadSummary() {
+        Date now = new Date();
+        fecha = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(now);
+        ((TextView) findViewById(R.id.etFecha)).setText(
+                new SimpleDateFormat("d 'de' MMMM 'de' yyyy", new Locale("es", "PE")).format(now));
+        ((TextView) findViewById(R.id.etResponsable)).setText(currentUser());
         try {
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT COUNT(*), SUM(total) FROM pedidos", null);
-            if (cursor.moveToFirst()) {
-                etBoletas.setText(String.valueOf(cursor.getInt(0)));
-                etVentas.setText(String.format(Locale.getDefault(), "%.2f", cursor.getDouble(1)));
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try (Cursor cursor = db.rawQuery("SELECT COUNT(*), COALESCE(SUM(total), 0) FROM pedidos", null)) {
+                if (cursor.moveToFirst()) {
+                    pedidos = cursor.getInt(0);
+                    importe = cursor.getDouble(1);
+                    ((TextView) findViewById(R.id.etBoletas)).setText(String.valueOf(pedidos));
+                    ((TextView) findViewById(R.id.etVentas)).setText(money(importe));
+                }
             }
-            cursor.close();
-            db.close();
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo cargar los datos de pedidos.");
+            save.setEnabled(true);
+        } catch (Exception error) {
+            save.setEnabled(false);
+            feedback(getString(R.string.summary_error), false);
         }
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        new AlertDialog.Builder(this)
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setPositiveButton("OK", null)
-                .show();
+    private void saveClose() {
+        if (saving) return;
+        saving = true;
+        save.setEnabled(false);
+        try {
+            ContentValues values = new ContentValues();
+            values.put("responsable", currentUser());
+            values.put("fecha", fecha);
+            values.put("boletas", pedidos);
+            values.put("ventas", importe);
+            helper.getWritableDatabase().insertOrThrow("cierres", null, values);
+            Toast.makeText(this, R.string.close_success, Toast.LENGTH_SHORT).show();
+            leaveSession();
+        } catch (Exception error) {
+            saving = false;
+            save.setEnabled(true);
+            feedback(getString(R.string.close_error), false);
+        }
+    }
+
+    @Override protected void onDestroy() {
+        if (helper != null) helper.close();
+        super.onDestroy();
     }
 }

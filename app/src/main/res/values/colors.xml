@@ -1,5 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="walok_primary">#9F252F</color>
+    <color name="walok_primary_pressed">#801D25</color>
+    <color name="walok_background">#FFFFFF</color>
+    <color name="walok_ink">#22252A</color>
+    <color name="walok_muted">#59626E</color>
+    <color name="walok_line">#D9DDE2</color>
+    <color name="walok_surface">#F6F7F8</color>
+    <color name="walok_tint">#F9EDF0</color>
+    <color name="walok_success">#236243</color>
+    <color name="walok_success_background">#EAF4EE</color>
+    <color name="walok_disabled">#747B84</color>
 </resources>

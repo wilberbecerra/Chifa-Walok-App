@@ -1,165 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/makis"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/btnCerrar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="X"
-        android:textColor="#D70000"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvTitulo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Caja"
-        android:textColor="#D70000"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnCerrar" />
-
-    <!-- Formulario -->
-
-    <!-- Botones alineados y mismo ancho -->
-    <LinearLayout
-        android:id="@+id/formCaja"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="36dp"
-        android:background="#E5D0D0"
-        android:orientation="vertical"
-        android:padding="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.531"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitulo">
-
-        <!-- Pedido ID + botón buscar -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="N° de Pedido:"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/etPedidoId"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:inputType="number" />
-
-            <Button
-                android:id="@+id/btnBuscar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:backgroundTint="#FF0000"
-                android:text="🔍"
-                android:textColor="#FFFFFF" />
-
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="N° de Mesa:"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etMesa"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Plato:"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etPlato"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Cantidad:"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etCantidad"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:enabled="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Total a Pagar:"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/etTotal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="numberDecimal" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/formCaja">
-
-        <Button
-            android:id="@+id/btnPagar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#FF0000"
-            android:padding="12dp"
-            android:text="Pagar"
-            android:textColor="#FFF" />
-
-        <Button
-            android:id="@+id/btnCierreCaja"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="#FF0000"
-            android:padding="12dp"
-            android:text="Cierre de caja"
-            android:textColor="#FFF" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/screenRoot" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@color/walok_background">
+    <include layout="@layout/walok_toolbar" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true" android:clipToPadding="false">
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="24dp" android:paddingBottom="32dp" android:layout_marginStart="@dimen/walok_screen_padding" android:layout_marginEnd="@dimen/walok_screen_padding" app:layout_constraintWidth_max="480dp" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent">
+                <TextView android:id="@+id/btnCerrar" style="@style/Walok.Muted" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/back_home" android:layout_marginBottom="12dp" android:minHeight="48dp" android:gravity="center_vertical" app:drawableStartCompat="@drawable/walok_ic_back" android:drawablePadding="6dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true" />
+                <TextView style="@style/Walok.Title" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/cash_title" />
+                <TextView style="@style/Walok.Description" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="@string/cash_description" />
+                <TextView style="@style/Walok.Label" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="22dp" android:text="@string/order_id_label" android:labelFor="@id/etPedidoId" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="8dp">
+                    <EditText android:id="@+id/etPedidoId" style="@style/Walok.Input" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:inputType="number" android:maxLength="10" android:hint="@string/order_id_hint" android:imeOptions="actionSearch" />
+                    <com.google.android.material.button.MaterialButton android:id="@+id/btnBuscar" style="@style/Walok.SecondaryButton" android:layout_width="104dp" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:text="@string/search" />
+                </LinearLayout>
+                <TextView android:id="@+id/tvFeedback" style="@style/Walok.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:text="@string/empty_value" android:visibility="gone" android:accessibilityLiveRegion="polite" android:padding="14dp" android:textSize="14sp" />
+                <TextView android:id="@+id/tvEmpty" style="@style/Walok.Description" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:text="@string/cash_empty" android:background="@drawable/walok_readonly" android:padding="24dp" android:gravity="center" />
+                <LinearLayout android:id="@+id/orderDetails" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" android:orientation="horizontal" android:gravity="center_vertical">
+                        <TextView android:id="@+id/tvPedidoNumero" style="@style/Walok.Label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/empty_value" android:layout_weight="1" />
+                        <TextView android:id="@+id/tvEstado" style="@style/Walok.Muted" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:text="@string/pending" android:layout_weight="1" android:gravity="end" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="16dp" android:background="@color/walok_line" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="14dp" android:paddingBottom="14dp" android:gravity="center_vertical" android:orientation="horizontal">
+                        <TextView style="@style/Walok.Muted" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/table_label" />
+                        <TextView android:id="@+id/etMesa" style="@style/Walok.Label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:gravity="end" android:text="@string/empty_value" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="14dp" android:paddingBottom="14dp" android:gravity="center_vertical" android:orientation="horizontal">
+                        <TextView style="@style/Walok.Muted" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/dish_label" />
+                        <TextView android:id="@+id/etPlato" style="@style/Walok.Label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:gravity="end" android:text="@string/empty_value" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingTop="14dp" android:paddingBottom="14dp" android:gravity="center_vertical" android:orientation="horizontal">
+                        <TextView style="@style/Walok.Muted" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/quantity_label" />
+                        <TextView android:id="@+id/etCantidad" style="@style/Walok.Label" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:gravity="end" android:text="@string/empty_value" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="24dp" android:background="@color/walok_line" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:paddingTop="22dp" android:paddingBottom="22dp">
+                        <TextView style="@style/Walok.Muted" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/amount_due" />
+                        <TextView android:id="@+id/etTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/zero_money" android:textSize="@dimen/walok_font_total" android:textColor="@color/walok_ink" android:fontFamily="sans-serif-medium" android:fontFeatureSettings="tnum" />
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="0dp" android:background="@color/walok_line" />
+                </LinearLayout>
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnPagar" style="@style/Walok.PrimaryButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="28dp" android:text="@string/register_payment" android:enabled="false" />
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnCierreCaja" style="@style/Walok.TextButton" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/go_close" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>

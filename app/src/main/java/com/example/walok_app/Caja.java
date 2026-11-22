@@ -1,112 +1,129 @@
 package com.example.walok_app;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.widget.*;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
-public class Caja extends AppCompatActivity {
+public class Caja extends WalokActivity {
+    private EditText pedidoId;
+    private Button pay;
+    private UserDatabaseHelper helper;
+    private long selectedId = -1;
 
-    EditText etPedidoId, etMesa, etPlato, etCantidad, etTotal;
-    Button btnBuscar, btnPagar, btnCierreCaja;
-    TextView btnCerrar;
-    UserDatabaseHelper dbHelper;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_caja);
-
-        etPedidoId = findViewById(R.id.etPedidoId);
-        etMesa = findViewById(R.id.etMesa);
-        etPlato = findViewById(R.id.etPlato);
-        etCantidad = findViewById(R.id.etCantidad);
-        etTotal = findViewById(R.id.etTotal);
-        btnBuscar = findViewById(R.id.btnBuscar);
-        btnPagar = findViewById(R.id.btnPagar);
-        btnCierreCaja = findViewById(R.id.btnCierreCaja);
-        btnCerrar = findViewById(R.id.btnCerrar);
-
-        dbHelper = new UserDatabaseHelper(this);
-
-        btnCerrar.setOnClickListener(v -> finish());
-
-        btnBuscar.setOnClickListener(v -> {
-            String id = etPedidoId.getText().toString().trim();
-            if (id.isEmpty()) {
-                alerta("Campo obligatorio", "Ingresa el número de pedido.");
-                return;
-            }
-
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("SELECT mesa, plato, cantidad, total FROM pedidos WHERE id = ?", new String[]{id});
-            if (cursor.moveToFirst()) {
-                etMesa.setText(cursor.getString(0));
-                etPlato.setText(cursor.getString(1));
-                etCantidad.setText(cursor.getString(2));
-                etTotal.setText(cursor.getString(3));
-
-                // Verificar si ya fue pagado
-                Cursor cursorPago = db.rawQuery("SELECT 1 FROM pagos WHERE pedidoId = ?", new String[]{id});
-                if (cursorPago.moveToFirst()) {
-                    alerta("Advertencia", "Este pedido ya fue pagado.");
-                    btnPagar.setEnabled(false);
-                } else {
-                    btnPagar.setEnabled(true);
-                }
-                cursorPago.close();
-
-            } else {
-                alerta("No encontrado", "El pedido no existe.");
-                btnPagar.setEnabled(false);
-            }
-            cursor.close();
-            db.close();
+    @Override protected void onCreate(Bundle state) {
+        super.onCreate(state);
+        if (!showScreen(R.layout.activity_caja, true)) return;
+        helper = new UserDatabaseHelper(this);
+        pedidoId = findViewById(R.id.etPedidoId);
+        pay = findViewById(R.id.btnPagar);
+        watch(pedidoId, () -> {
+            selectedId = -1;
+            pay.setEnabled(false);
+            findViewById(R.id.orderDetails).setVisibility(View.GONE);
+            TextView empty = findViewById(R.id.tvEmpty);
+            empty.setText(R.string.cash_empty);
+            empty.setVisibility(View.VISIBLE);
+            hideFeedback();
         });
+        findViewById(R.id.btnBuscar).setOnClickListener(v -> search());
+        pedidoId.setOnEditorActionListener((v, action, event) -> {
+            if (action == EditorInfo.IME_ACTION_SEARCH) { search(); return true; }
+            return false;
+        });
+        pay.setOnClickListener(v -> registerPayment());
+        findViewById(R.id.btnCierreCaja).setOnClickListener(v -> startActivity(new Intent(this, CierreCaja.class)));
+    }
 
-        btnPagar.setOnClickListener(v -> {
-            String pedidoId = etPedidoId.getText().toString().trim();
-            String total = etTotal.getText().toString().trim();
+    private void search() {
+        hideFeedback();
+        try {
+            long id = Long.parseLong(pedidoId.getText().toString().trim());
+            if (id <= 0) throw new NumberFormatException();
+            loadOrder(id);
+        } catch (NumberFormatException error) {
+            feedback(getString(R.string.order_id_invalid), false);
+        } catch (Exception error) {
+            selectedId = -1;
+            pay.setEnabled(false);
+            feedback(getString(R.string.search_error), false);
+        }
+    }
 
-            if (pedidoId.isEmpty() || etMesa.getText().toString().isEmpty() || total.isEmpty()) {
-                alerta("Datos incompletos", "Todos los campos son obligatorios.");
+    private boolean isPaid(SQLiteDatabase db, long id) {
+        try (Cursor cursor = db.rawQuery("SELECT 1 FROM pagos WHERE pedidoId = ? LIMIT 1",
+                new String[]{String.valueOf(id)})) {
+            return cursor.moveToFirst();
+        }
+    }
+
+    private void loadOrder(long id) {
+        selectedId = -1;
+        pay.setEnabled(false);
+        SQLiteDatabase db = helper.getReadableDatabase();
+        try (Cursor cursor = db.rawQuery("SELECT mesa, plato, cantidad, total FROM pedidos WHERE id = ?",
+                new String[]{String.valueOf(id)})) {
+            if (!cursor.moveToFirst()) {
+                findViewById(R.id.orderDetails).setVisibility(View.GONE);
+                TextView empty = findViewById(R.id.tvEmpty);
+                empty.setText(R.string.cash_not_found);
+                empty.setVisibility(View.VISIBLE);
                 return;
             }
+            selectedId = id;
+            ((TextView) findViewById(R.id.tvPedidoNumero)).setText(getString(R.string.order_number, id));
+            ((TextView) findViewById(R.id.etMesa)).setText(cursor.getString(0));
+            ((TextView) findViewById(R.id.etPlato)).setText(cursor.getString(1));
+            ((TextView) findViewById(R.id.etCantidad)).setText(String.valueOf(cursor.getInt(2)));
+            ((TextView) findViewById(R.id.etTotal)).setText(money(cursor.getDouble(3)));
+            boolean paid = isPaid(db, id);
+            TextView status = findViewById(R.id.tvEstado);
+            status.setText(paid ? R.string.paid : R.string.pending);
+            status.setTextColor(getColor(paid ? R.color.walok_success : R.color.walok_primary));
+            pay.setEnabled(!paid);
+            findViewById(R.id.tvEmpty).setVisibility(View.GONE);
+            findViewById(R.id.orderDetails).setVisibility(View.VISIBLE);
+        }
+    }
 
+    private void registerPayment() {
+        if (selectedId <= 0) return;
+        long id = selectedId;
+        try {
+            SQLiteDatabase db = helper.getWritableDatabase();
+            db.beginTransaction();
+            boolean alreadyPaid;
             try {
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-                db.execSQL("INSERT INTO pagos (pedidoId, total) VALUES (?, ?)", new Object[]{pedidoId, total});
-                db.close();
-                alerta("Éxito", "Pago registrado correctamente.");
-                limpiar();
-            } catch (Exception e) {
-                alerta("Error", "No se pudo registrar el pago.");
+                alreadyPaid = isPaid(db, id);
+                if (!alreadyPaid) {
+                    try (Cursor cursor = db.rawQuery("SELECT total FROM pedidos WHERE id = ?",
+                            new String[]{String.valueOf(id)})) {
+                        if (!cursor.moveToFirst()) throw new IllegalStateException("Missing order");
+                        ContentValues values = new ContentValues();
+                        values.put("pedidoId", id);
+                        values.put("total", cursor.getDouble(0));
+                        db.insertOrThrow("pagos", null, values);
+                    }
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-        });
-
-        btnCierreCaja.setOnClickListener(v -> {
-            Intent intent = new Intent(Caja.this, CierreCaja.class);
-            startActivity(intent);
-        });
+            loadOrder(id);
+            feedback(getString(alreadyPaid ? R.string.payment_exists : R.string.payment_success), !alreadyPaid);
+        } catch (Exception error) {
+            feedback(getString(R.string.payment_error), false);
+        }
     }
 
-    private void alerta(String titulo, String mensaje) {
-        new AlertDialog.Builder(this)
-                .setTitle(titulo)
-                .setMessage(mensaje)
-                .setPositiveButton("OK", null)
-                .show();
-    }
-
-    private void limpiar() {
-        etPedidoId.setText("");
-        etMesa.setText("");
-        etPlato.setText("");
-        etCantidad.setText("");
-        etTotal.setText("");
-        btnPagar.setEnabled(true);
+    @Override protected void onDestroy() {
+        if (helper != null) helper.close();
+        super.onDestroy();
     }
 }
