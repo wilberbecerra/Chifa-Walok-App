@@ -28,24 +28,27 @@ public abstract class WalokActivity extends AppCompatActivity {
             return false;
         }
         setContentView(layout);
+        boolean loginScreen = layout == R.layout.activity_main;
         boolean lightNavigation = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+        int backgroundColor = getColor(loginScreen ? R.color.walok_card : R.color.walok_background);
+        int statusColor = getColor(loginScreen ? R.color.walok_card : R.color.walok_header);
+        int navigationColor = lightNavigation ? backgroundColor
+                : getColor(loginScreen ? R.color.walok_primary : R.color.walok_header);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightStatusBars(false);
+                .setAppearanceLightStatusBars(loginScreen);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
                 .setAppearanceLightNavigationBars(lightNavigation);
-        getWindow().setStatusBarColor(getColor(R.color.walok_header));
-        getWindow().setNavigationBarColor(getColor(lightNavigation
-                ? R.color.walok_background : R.color.walok_header));
+        getWindow().setStatusBarColor(statusColor);
+        getWindow().setNavigationBarColor(navigationColor);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getWindow().setNavigationBarContrastEnforced(false);
         }
         View root = findViewById(R.id.screenRoot);
         LayerDrawable backdrop = new LayerDrawable(new Drawable[]{
-                new ColorDrawable(getColor(R.color.walok_background)),
-                new ColorDrawable(getColor(R.color.walok_header)),
-                new ColorDrawable(getColor(lightNavigation
-                        ? R.color.walok_background : R.color.walok_header))});
+                new ColorDrawable(backgroundColor),
+                new ColorDrawable(statusColor),
+                new ColorDrawable(navigationColor)});
         backdrop.setLayerGravity(1, Gravity.TOP);
         backdrop.setLayerHeight(1, 0);
         backdrop.setLayerGravity(2, Gravity.BOTTOM);
