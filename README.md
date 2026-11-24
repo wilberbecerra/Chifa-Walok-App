@@ -36,19 +36,36 @@ El catálogo incluido contiene **cinco mesas y cuatro platos**: Arroz Chaufa, Po
 
 Capturas de Walok en ejecución con datos de demostración. Haz clic para abrirlas completas.
 
-| Inicio de sesión | Operaciones |
-| :---: | :---: |
-| <a href="./recursos/login.png"><img src="./recursos/login.png" width="250" alt="Inicio de sesión de Walok"></a> | <a href="./recursos/main.png"><img src="./recursos/main.png" width="250" alt="Menú de pedidos y caja"></a> |
-
-| Registro de pedido | Caja |
-| :---: | :---: |
-| <a href="./recursos/pedidos.png"><img src="./recursos/pedidos.png" width="250" alt="Mesa, plato, cantidad e importe del pedido"></a> | <a href="./recursos/caja.png"><img src="./recursos/caja.png" width="250" alt="Detalle y estado de pago de un pedido"></a> |
-
-<p align="center">
-  <a href="./recursos/cierre_de_caja.png"><img src="./recursos/cierre_de_caja.png" width="250" alt="Resumen de cierre de caja"></a>
-</p>
-
-<p align="center">Resumen de pedidos, responsable y fecha del cierre.</p>
+<table width="100%">
+  <tr>
+    <th colspan="3" align="center">Inicio de sesión</th>
+    <th colspan="3" align="center">Operaciones</th>
+  </tr>
+  <tr>
+    <td colspan="3" align="center" valign="top">
+      <a href="./recursos/login.png"><img src="./recursos/login.png" width="200" alt="Inicio de sesión de Walok"></a>
+    </td>
+    <td colspan="3" align="center" valign="top">
+      <a href="./recursos/main.png"><img src="./recursos/main.png" width="200" alt="Menú de pedidos y caja"></a>
+    </td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">Pedidos</th>
+    <th colspan="2" align="center">Caja</th>
+    <th colspan="2" align="center">Cierre de caja</th>
+  </tr>
+  <tr>
+    <td colspan="2" align="center" valign="top">
+      <a href="./recursos/pedidos.png"><img src="./recursos/pedidos.png" width="200" alt="Mesa, plato, cantidad e importe del pedido"></a>
+    </td>
+    <td colspan="2" align="center" valign="top">
+      <a href="./recursos/caja.png"><img src="./recursos/caja.png" width="200" alt="Detalle y estado de pago de un pedido"></a>
+    </td>
+    <td colspan="2" align="center" valign="top">
+      <a href="./recursos/cierre_de_caja.png"><img src="./recursos/cierre_de_caja.png" width="200" alt="Resumen de cierre de caja"></a>
+    </td>
+  </tr>
+</table>
 
 ## Funcionalidades
 
