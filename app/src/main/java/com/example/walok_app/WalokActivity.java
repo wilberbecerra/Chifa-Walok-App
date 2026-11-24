@@ -1,10 +1,14 @@
 package com.example.walok_app;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,22 +28,35 @@ public abstract class WalokActivity extends AppCompatActivity {
             return false;
         }
         setContentView(layout);
+        boolean lightNavigation = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightStatusBars(true);
+                .setAppearanceLightStatusBars(false);
         WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView())
-                .setAppearanceLightNavigationBars(true);
-        getWindow().setStatusBarColor(getColor(R.color.walok_background));
-        getWindow().setNavigationBarColor(getColor(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                ? R.color.walok_background : R.color.walok_ink));
+                .setAppearanceLightNavigationBars(lightNavigation);
+        getWindow().setStatusBarColor(getColor(R.color.walok_header));
+        getWindow().setNavigationBarColor(getColor(lightNavigation
+                ? R.color.walok_background : R.color.walok_header));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getWindow().setNavigationBarContrastEnforced(false);
         }
         View root = findViewById(R.id.screenRoot);
+        LayerDrawable backdrop = new LayerDrawable(new Drawable[]{
+                new ColorDrawable(getColor(R.color.walok_background)),
+                new ColorDrawable(getColor(R.color.walok_header)),
+                new ColorDrawable(getColor(lightNavigation
+                        ? R.color.walok_background : R.color.walok_header))});
+        backdrop.setLayerGravity(1, Gravity.TOP);
+        backdrop.setLayerHeight(1, 0);
+        backdrop.setLayerGravity(2, Gravity.BOTTOM);
+        backdrop.setLayerHeight(2, 0);
+        root.setBackground(backdrop);
         ViewCompat.setOnApplyWindowInsetsListener(root, (view, windowInsets) -> {
             Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.displayCutout());
             Insets keyboard = windowInsets.getInsets(WindowInsetsCompat.Type.ime());
+            if (backdrop.getLayerHeight(1) != bars.top) backdrop.setLayerHeight(1, bars.top);
+            if (backdrop.getLayerHeight(2) != bars.bottom) backdrop.setLayerHeight(2, bars.bottom);
             view.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, keyboard.bottom));
             return windowInsets;
         });

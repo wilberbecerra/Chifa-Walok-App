@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Walok" />
     <style name="Walok.Title">
@@ -52,10 +53,10 @@
         <item name="android:textSize">@dimen/walok_font_body</item>
         <item name="android:letterSpacing">0</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/walok_background</item>
+        <item name="android:textColor">@color/white</item>
         <item name="backgroundTint">@color/walok_button_background</item>
         <item name="cornerRadius">@dimen/walok_radius</item>
-        <item name="iconTint">@color/walok_background</item>
+        <item name="iconTint">@color/white</item>
         <item name="iconGravity">textStart</item>
     </style>
     <style name="Walok.SecondaryButton" parent="Widget.Material3.Button.OutlinedButton">

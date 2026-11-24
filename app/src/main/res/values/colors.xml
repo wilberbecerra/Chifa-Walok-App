@@ -1,15 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="walok_primary">#9F252F</color>
     <color name="walok_primary_pressed">#801D25</color>
-    <color name="walok_background">#FFFFFF</color>
-    <color name="walok_ink">#22252A</color>
-    <color name="walok_muted">#59626E</color>
-    <color name="walok_line">#D9DDE2</color>
-    <color name="walok_surface">#F6F7F8</color>
-    <color name="walok_tint">#F9EDF0</color>
+    <color name="walok_background">#EEF0F3</color>
+    <color name="walok_ink">#22262D</color>
+    <color name="walok_muted">#59636F</color>
+    <color name="walok_line">#DCE1E7</color>
+    <color name="walok_surface">#F3F5F7</color>
+    <color name="walok_tint">#F8EDF0</color>
     <color name="walok_success">#236243</color>
     <color name="walok_success_background">#EAF4EE</color>
     <color name="walok_disabled">#747B84</color>
+    <color name="walok_card">#FFFFFF</color>
+    <color name="walok_header">#24262C</color>
+    <color name="walok_on_header">#F7F8FA</color>
+    <color name="walok_header_muted">#C5CBD4</color>
 </resources>
